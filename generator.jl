@@ -1,6 +1,11 @@
 using Gadfly
 
 
+"""
+collatz_generator(n)
+
+Generate an array from performing the Collatz Conjecture operation on a seed number n 
+"""
 function collatz_generator(n)
     seq = [n]
     while n != 1
@@ -16,7 +21,16 @@ end
 
 
 y = []
-for i in 1:100000
+for i in 1:100
     push!(y, collatz_generator(i))
 end
-plot(y=y[50], Geom.point, Geom.line, Geom.path, Guide.xlabel("n"), Guide.ylabel("value"))
+
+layers = []
+for y_i in y
+    layer_i = layer(x=[i for i in 1:length(y_i)], y=y_i, Geom.line, Geom.point)
+    push!(layers, layer_i)
+end
+
+img = SVG("collatz_plot.svg", 12inch, 8inch)
+fig = plot(layers...)
+draw(img, fig)
